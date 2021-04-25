@@ -18,7 +18,7 @@ calcNISTax amount = foldl' (taxCalc amount) 0 rates
           Nothing -> addRate amount'
           Just higher' ->
             if amount' <= higher'
-              then addRate amount'
+              then addRate $ amount' - lower
               else addRate higher'
         else acc
       where
