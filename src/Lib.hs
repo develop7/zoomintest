@@ -10,7 +10,7 @@ where
 import Data.List (foldl')
 
 calcNISTax :: Integer -> Integer
-calcNISTax amount = foldl' (taxCalc amount) 0 rates
+calcNISTax amount | amount > 0 = foldl' (taxCalc amount) 0 rates
   where
     taxCalc amount' acc TaxRate {..} =
       if amount' > lower
@@ -24,6 +24,7 @@ calcNISTax amount = foldl' (taxCalc amount) 0 rates
         else acc
       where
         addRate amt = acc + round (fromIntegral amt * rate)
+calcNISTax _ = 0
 
 data TaxRate = TaxRate {lower :: Integer, higher :: Maybe Integer, rate :: Double}
 
