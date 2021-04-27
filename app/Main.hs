@@ -4,22 +4,29 @@
 module Main where
 
 import Data.List (foldl')
-import Lib
+import System.Environment (getArgs)
+import Text.Read (readEither)
 
 main :: IO ()
-main = someFunc
+main = do
+  (amt : _) <- getArgs
+  let amt'' = readEither amt
+  putStrLn $ case amt'' of
+    Right amt' -> show $ calcNISTax amt'
+    Left err -> "failed to parse \"" ++ amt ++ "\": " ++ err
 
 calcNISTax :: Integer -> Integer
 calcNISTax amount = foldl' (taxCalc amount) 0 rates
   where
     taxCalc amount' acc TaxRate {..} =
       if amount' > lower
-        then case higher of
-          Nothing -> addRate amount'
-          Just higher' ->
-            if amount' <= higher'
-              then addRate $ amount' - lower
-              else addRate higher'
+        then addRate $
+          case higher of
+            Nothing -> amount'
+            Just higher' ->
+              if amount' <= higher'
+                then amount' - lower
+                else higher'
         else acc
       where
         addRate amt = acc + round (fromIntegral amt * rate)
