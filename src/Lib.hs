@@ -20,7 +20,7 @@ calcNISTax amount | amount > 0 = foldl' (taxCalc amount) 0 rates
             Just higher' ->
               if amount' <= higher'
                 then amount' - lower
-                else higher'
+                else higher' - lower
         else acc
       where
         addRate amt = acc + round (fromIntegral amt * rate)
